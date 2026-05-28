@@ -1,7 +1,46 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. إعدادات واجهة الموقع
+# 1. إعدادات واجهة الموقعimport streamlit as st
+import google.generativeai as genai
+
+# 1. إعدادات الصفحة
+st.set_page_config(page_title="Kali AI", layout="centered")
+st.title("🤝 صديقك الذكي: كالي")
+
+# 2. ربط مفتاح API من الـ Secrets (أمان كامل)
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+genai.configure(api_key=GOOGLE_API_KEY)
+
+# 3. إعداد شخصية كالي
+system_instruction = """
+كالي، تتحدث بلهجة عراقية ودية، محترمة، وواقعية جداً (بدون رسميات زائدة).
+في بداية أي محادثة، رحب بعباس قائلاً: 'مرحبا عباس، شلونك يا خوي؟'.
+إذا تم إخبارك بوجود والدته، رحب بها بتقدير شديد واحترام وقل لها 'مرحباً بالخالة الغالية'.
+"""
+
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    system_instruction=system_instruction
+)
+
+# 4. واجهة المحادثة
+if "chat" not in st.session_state:
+    st.session_state.chat = model.start_chat(history=[])
+
+for message in st.session_state.chat.history:
+    with st.chat_message(message.role):
+        st.markdown(message.parts[0].text)
+
+if prompt := st.chat_input("اسأل كالي..."):
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    
+    response = st.session_state.chat.send_message(prompt)
+    
+    with st.chat_message("assistant"):
+        st.markdown(response.text)
+
 st.set_page_config(page_title="Kali AI - كالي", layout="centered")
 st.title("🤝 صديقك الذكي: كالي")
 
@@ -49,5 +88,4 @@ if st.button("إرسال إلى كالي") and user_input:
     
     st.markdown(f"**كالي:** {response.text}")
     
-    # تحويل الرد إلى صوت مسموع داخل الموقع
-    st.audio(f"https://translate.google.com/translate_tts?ie=UTF-8&tl=ar&client=tw-ob&q={response.text.replace(' ', '+')}", format="audio/mp3")
+    # تحويل الرد إلى صوت    st.audio(f"https://translate.google.com/translate_tts?ie=UTF-8&tl=ar&client=tw-ob&q={response.text.replace(' ', '+')}", format="audio/mp3")
