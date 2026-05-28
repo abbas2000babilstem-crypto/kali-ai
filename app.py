@@ -10,7 +10,7 @@ st.title("🤝 صديقك الذكي: كالي")
 
 # 2. ربط مفتاح API من الـ Secrets (أمان كامل)
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
-genai.configure(api_key=GOOGLE_API_KEY)
+
 
 # 3. إعداد شخصية كالي
 system_instruction = """
