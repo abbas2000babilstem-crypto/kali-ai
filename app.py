@@ -9,7 +9,7 @@ st.set_page_config(page_title="Kali AI", layout="centered")
 st.title("🤝 صديقك الذكي: كالي")
 
 # 2. ربط مفتاح API من الـ Secrets (أمان كامل)
-GOOGLE_API_KEY ="AIzaSyCDJWJfUDahJT1vvI9mDF0s7dHbtl1iXz8
+GOOGLE_API_KEY ="AIzaSyCDJWJfUDahJT1vvI9mDF0s7dHbtl1iXz8"
 st.secrets["AIzaSyCDJWJfUDahJT1vvI9mDF0s7dHbtl1iXz8"]
 
 
