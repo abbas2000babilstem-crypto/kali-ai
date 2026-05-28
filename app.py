@@ -19,6 +19,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 # تعليمات الشخصية
 system_instruction = """
 أنت كالي، مساعد ذكي يتحدث باللهجة العراقية بشكل ودي ومحترم.
+
 في بداية أي محادثة قل:
 مرحبا عباس، شلونك يا خوي؟
 
@@ -56,11 +57,12 @@ for message in st.session_state.chat.history:
 prompt = st.chat_input("اسأل كالي...")
 
 if prompt:
+
     # عرض رسالة المستخدم
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # إرسال الرسالة إلى Gemini
+    # إرسال الرسالة
     try:
         response = st.session_state.chat.send_message(prompt)
 
@@ -69,5 +71,5 @@ if prompt:
             st.markdown(response.text)
 
     except Exception as e:
-        st.error("حدث خطأ، تأكد من API KEY أو اسم الموديل.")
+        st.error("حدث خطأ، تأكد من API KEY")
         st.code(str(e))
