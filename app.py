@@ -1,41 +1,73 @@
 import streamlit as st
 import google.generativeai as genai
 
-# إعدادات الصفحة
-st.set_page_config(page_title="Kali AI", layout="centered")
+# إعداد الصفحة
+st.set_page_config(
+    page_title="Kali AI",
+    page_icon="🤝",
+    layout="centered"
+)
+
 st.title("🤝 صديقك الذكي: كالي")
 
-# ربط مفتاح API من Secrets
+# قراءة API KEY من Secrets
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+
+# تفعيل Gemini
 genai.configure(api_key=GOOGLE_API_KEY)
 
-# إعداد شخصية كالي
+# تعليمات الشخصية
 system_instruction = """
-أنت 'كالي'، مساعد ذكي يتحدث باللهجة العراقية الودية، محترم، وواقعي جداً (بدون رسميات زائدة).
-في بداية أي محادثة، رحب بعباس قائلاً: 'مرحبا عباس، شلونك يا خوي؟'.
-إذا سألك عن الوالدة، رحب بها بتقدير شديد واحترام وقل لها 'مرحباً بالخالة الغالية'.
+أنت كالي، مساعد ذكي يتحدث باللهجة العراقية بشكل ودي ومحترم.
+في بداية أي محادثة قل:
+مرحبا عباس، شلونك يا خوي؟
+
+إذا تم ذكر الوالدة قل:
+مرحباً بالخالة الغالية.
 """
 
+# إنشاء الموديل
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash-latest",
+    model_name="models/gemini-1.5-flash",
     system_instruction=system_instruction
 )
 
-# بدء المحادثة
+# حفظ المحادثة
 if "chat" not in st.session_state:
     st.session_state.chat = model.start_chat(history=[])
 
 # عرض الرسائل السابقة
 for message in st.session_state.chat.history:
-    with st.chat_message(message.role):
-        st.markdown(message.parts[0].text)
+    role = "assistant"
 
-# مربع الإدخال
-if prompt := st.chat_input("اسأل كالي..."):
+    try:
+        if message.role == "user":
+            role = "user"
+    except:
+        pass
+
+    with st.chat_message(role):
+        try:
+            st.markdown(message.parts[0].text)
+        except:
+            pass
+
+# صندوق الكتابة
+prompt = st.chat_input("اسأل كالي...")
+
+if prompt:
+    # عرض رسالة المستخدم
     with st.chat_message("user"):
         st.markdown(prompt)
-    
-    response = st.session_state.chat.send_message(prompt)
-    
-    with st.chat_message("assistant"):
-        st.markdown(response.text)
+
+    # إرسال الرسالة إلى Gemini
+    try:
+        response = st.session_state.chat.send_message(prompt)
+
+        # عرض الرد
+        with st.chat_message("assistant"):
+            st.markdown(response.text)
+
+    except Exception as e:
+        st.error("حدث خطأ، تأكد من API KEY أو اسم الموديل.")
+        st.code(str(e))
