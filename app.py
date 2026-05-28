@@ -29,7 +29,7 @@ system_instruction = """
 
 # إنشاء الموديل
 model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-flash",
+    model_name="gemini-1.5-flash-latest",
     system_instruction=system_instruction
 )
 
